@@ -31,8 +31,12 @@ api.use(helmet.contentSecurityPolicy({
 let home = require('./routes/home');
 let races = require('./routes/races');
 let classes = require('./routes/classes');
+let disciplines = require('./routes/disciplines');
+let powers = require('./routes/powers');
 
 //use Malekai routes
 api.use('/', home);
 api.use('/races', races);
 api.use('/classes', classes);
+api.use('/disciplines', disciplines);
+api.use('/powers', powers);

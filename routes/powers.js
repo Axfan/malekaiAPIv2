@@ -10,7 +10,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-let routeName = "races", dbName = "disciplineLibrary";
+let routeName = "powers", dbName = "powerLibrary";
 
 //malekai.org class route get handler
 router.get('/', function (req, res) {
@@ -32,7 +32,6 @@ router.get('/', function (req, res) {
   //start request for all data route handler
   if(retrieveAll) {
     r.table(dbName)
-    .filter({ type:'race'})
     .orderBy('id')
     .run()
     .then(results => {
@@ -64,7 +63,6 @@ router.get('/', function (req, res) {
 
     //start pagination route handler
     r.table(dbName)
-    .filter({ type:'race'})
     .orderBy('id')
     .skip(resultStart)
     .limit(resultLimit)
@@ -111,7 +109,6 @@ router.get('/:id', function (req, res) {
   if(req.params.id) {
     let name = req.params.id.toLowerCase().replace(' ', '-');
     r.table(dbName)
-    .filter({ type:'race'})
     .filter({ id: name})
     .run()
     .then(results => {
