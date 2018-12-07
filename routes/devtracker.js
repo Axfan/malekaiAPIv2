@@ -10,7 +10,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-let routeName = "races", dbName = "disciplineLibrary";
+let routeName = "devtracker", dbName = "socialTracker";
 
 //malekai.org class route get handler
 router.get('/', function (req, res) {
@@ -21,30 +21,24 @@ router.get('/', function (req, res) {
   }
   let resultLimit = parseInt(req.query.limit, 10);
   if (isNaN(resultLimit)){
-    resultLimit = 50;
-  } else if (resultLimit > 100) {
-    resultLimit = 100;
-  } else if (resultLimit < 25) {
     resultLimit = 25;
+  } else if (resultLimit > 50) {
+    resultLimit = 50;
+  } else if (resultLimit < 5) {
+    resultLimit = 5;
   }
   let retrieveAll = req.query.all && req.query.all.toLowerCase() == 'yes' ? true : false;
-
   //start request for all data route handler
   if(retrieveAll) {
     r.table(dbName)
-    .filter({ type:'race'})
-    .orderBy('id')
+    .filter({ data_type: "devtracker" }) //videos
+    .orderBy(r.desc('post_date'))
     .run()
     .then(results => {
       let response;
       if(results.length > 0) {
-        let processedData = results.map(data => {
-          data.icon = `https://cdn.malekai.network/images/${routeName}/${data.id}.png`;
-          data.icon_svg = `https://cdn.malekai.network/svgs/${routeName}/${data.id}.svg`;
-          return data;
-        })
         response = {
-          results: processedData,
+          results: results,
           nextPage: false,
           retrievedAll: true
         };
@@ -58,34 +52,27 @@ router.get('/', function (req, res) {
       console.error(err);
     })
     //end request for all data route handler
-
   } else {
-
     //start pagination route handler
     r.table(dbName)
-    .filter({ type:'race'})
-    .orderBy('id')
+    .filter({ data_type: "devtracker" })
+    .orderBy(r.desc('post_date'))
     .skip(resultStart)
     .limit(resultLimit)
     .run()
     .then(results => {
       let response;
       if(results.length > 0) {
-        let processedData = results.map(data => {
-          data.icon = `https://cdn.malekai.network/images/${routeName}/${data.id}.png`;
-          data.icon_svg = `https://cdn.malekai.network/svgs/${routeName}/${data.id}.svg`;
-          return data;
-        })
         if(results.length < resultLimit){
           response = {
-            results: processedData,
+            results: results,
             nextPage: false,
             cursor: resultStart + resultLimit,
             limit: resultLimit
           };
         } else {
           response = {
-            results: processedData,
+            results: results,
             nextPage: `https://api.malekai.org/${routeName}?start=${resultLimit + resultStart}&limit=${resultLimit}`,
             cursor: resultStart + resultLimit,
             limit: resultLimit
@@ -104,36 +91,5 @@ router.get('/', function (req, res) {
   }
   //end pagination route handler
 })
-
-//search route
-router.get('/:id', function (req, res) {
-  if(req.params.id) {
-    let name = req.params.id.toLowerCase().replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-");
-    r.table(dbName)
-    .filter({ type:'race'})
-    .filter({ id: name})
-    .run()
-    .then(results => {
-      let response;
-      if(results && results.length >= 1){
-        let processedData = results.map(data => {
-          data.icon = `https://cdn.malekai.network/images/${routeName}/${data.id}.png`;
-          data.icon_svg = `https://cdn.malekai.network/svgs/${routeName}/${data.id}.svg`;
-          return data;
-        })
-        response = {
-          results: processedData
-        };
-        res.status(200).send(response);
-      } else {
-        res.status(404).send(`No results found for ${req.params.id}.`);
-      }
-    })
-    .catch( err =>{
-      res.status(404).send('An Error Occured. Ear Spiders were sent to notify the appropriate parties.');
-      console.error(err);
-    })
-  }
-});
 
 module.exports = router;

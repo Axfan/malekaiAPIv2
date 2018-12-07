@@ -10,7 +10,7 @@ router.use(function(req, res, next) {
     next();
 });
 
-let routeName = "races", dbName = "disciplineLibrary";
+let routeName = "talents", dbName = "talentLibrary";
 
 //malekai.org class route get handler
 router.get('/', function (req, res) {
@@ -32,7 +32,6 @@ router.get('/', function (req, res) {
   //start request for all data route handler
   if(retrieveAll) {
     r.table(dbName)
-    .filter({ type:'race'})
     .orderBy('id')
     .run()
     .then(results => {
@@ -60,10 +59,8 @@ router.get('/', function (req, res) {
     //end request for all data route handler
 
   } else {
-
     //start pagination route handler
     r.table(dbName)
-    .filter({ type:'race'})
     .orderBy('id')
     .skip(resultStart)
     .limit(resultLimit)
@@ -108,10 +105,71 @@ router.get('/', function (req, res) {
 //search route
 router.get('/:id', function (req, res) {
   if(req.params.id) {
-    let name = req.params.id.toLowerCase().replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-");
+    let name = req.params.id.toLowerCase().replace(' ', '-');
     r.table(dbName)
-    .filter({ type:'race'})
     .filter({ id: name})
+    .run()
+    .then(results => {
+      let response;
+      if(results && results.length >= 1){
+        let processedData = results.map(data => {
+          data.icon = `https://cdn.malekai.network/images/${routeName}/${data.id}.png`;
+          data.icon_svg = `https://cdn.malekai.network/svgs/${routeName}/${data.id}.svg`;
+          return data;
+        })
+        response = {
+          results: processedData
+        };
+        res.status(200).send(response);
+      } else {
+        res.status(404).send(`No results found for ${req.params.id}.`);
+      }
+    })
+    .catch( err =>{
+      res.status(404).send('An Error Occured. Ear Spiders were sent to notify the appropriate parties.');
+      console.error(err);
+    })
+  }
+});
+
+router.get('/modifies/:id', function (req, res) {
+  if(req.params.id) {
+    let name = req.params.id.replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-");
+    r.table(dbName)
+    .filter(function(talent) {
+      return talent("modifies").toLowerCase().replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-").contains(name);
+    })
+    .run()
+    .then(results => {
+      let response;
+      if(results && results.length >= 1){
+        let processedData = results.map(data => {
+          data.icon = `https://cdn.malekai.network/images/${routeName}/${data.id}.png`;
+          data.icon_svg = `https://cdn.malekai.network/svgs/${routeName}/${data.id}.svg`;
+          return data;
+        })
+        response = {
+          results: processedData
+        };
+        res.status(200).send(response);
+      } else {
+        res.status(404).send(`No results found for ${req.params.id}.`);
+      }
+    })
+    .catch( err =>{
+      res.status(404).send('An Error Occured. Ear Spiders were sent to notify the appropriate parties.');
+      console.error(err);
+    })
+  }
+});
+//get talents that unlock a specific power
+router.get('/unlocks/:id', function (req, res) {
+  if(req.params.id) {
+    let name = req.params.id.replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-");
+    r.table(dbName)
+    .filter(function(talent) {
+      return talent("unlocks").toLowerCase().replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-").contains(name);
+    })
     .run()
     .then(results => {
       let response;

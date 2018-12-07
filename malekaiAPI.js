@@ -33,6 +33,11 @@ let races = require('./routes/races');
 let classes = require('./routes/classes');
 let disciplines = require('./routes/disciplines');
 let powers = require('./routes/powers');
+let talents = require('./routes/talents');
+let news = require('./routes/news');
+let devtracker = require('./routes/devtracker');
+let videos = require('./routes/videos');
+let changelog = require('./routes/changelog');
 
 //use Malekai routes
 api.use('/', home);
@@ -40,3 +45,8 @@ api.use('/races', races);
 api.use('/classes', classes);
 api.use('/disciplines', disciplines);
 api.use('/powers', powers);
+api.use('/talents', talents);
+api.use('/news', news);
+api.use('/devtracker', devtracker);
+api.use('/videos', videos);
+api.use('/changelog', changelog);

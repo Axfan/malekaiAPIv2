@@ -48,8 +48,7 @@ router.get('/', function (req, res) {
         response = {
           results: processedData,
           nextPage: false,
-          cursor: resultStart + resultLimit,
-          limit: resultLimit
+          retrievedAll: true
         };
         res.status(200).send(response);
       } else {
@@ -113,7 +112,7 @@ router.get('/', function (req, res) {
 //search route
 router.get('/:id', function (req, res) {
   if(req.params.id) {
-    let name = req.params.id.toLowerCase().replace(' ', '-');
+    let name = req.params.id.toLowerCase().replace(/[^A-Za-z0-9- ]+/, "").trim().replace(" ","-");
     r.table(dbName)
     .filter(function(disciplines) {
       return r.expr(['minor', 'major', 'weapon']).contains(disciplines('type'))
