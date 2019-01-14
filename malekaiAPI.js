@@ -8,6 +8,7 @@ const compression = require('compression');
 const api = express();
 
 //Express Configuration
+require('dotenv').config();
 const port = 7077; //api.malekai.org addy
 const ip = '0.0.0.0';
 api.listen(port, ip);
@@ -27,6 +28,31 @@ api.use(helmet.contentSecurityPolicy({
   }
 }))
 
+// Sessions
+const r = require('rethinkdbdash')({
+  host: 'localhost',
+  db: 'crowfallData',
+});
+const session = require('express-session');
+const RDBStore = require('session-rethinkdb')(session);
+
+const sessionStore = new RDBStore(r, {
+	browserSessionsMaxAge: 60000, 
+	clearInterval: 60000
+});
+
+api.use(session({
+	secret: 'malekai',
+	cookie: {
+		maxAge: 600000
+	},
+	store: sessionStore,
+	resave: true,
+	saveUninitialized: false
+}));
+
+
+
 //load Malekai routes
 let home = require('./routes/home');
 let races = require('./routes/races');
@@ -38,6 +64,7 @@ let news = require('./routes/news');
 let devtracker = require('./routes/devtracker');
 let videos = require('./routes/videos');
 let changelog = require('./routes/changelog');
+let login = require('./routes/login');
 
 //use Malekai routes
 api.use('/', home);
@@ -50,3 +77,4 @@ api.use('/news', news);
 api.use('/devtracker', devtracker);
 api.use('/videos', videos);
 api.use('/changelog', changelog);
+api.use('/login', login);

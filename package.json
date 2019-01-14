@@ -9,10 +9,18 @@
   "author": "Scree",
   "license": "MIT",
   "dependencies": {
+    "btoa": "^1.2.1",
     "compression": "^1.7.3",
     "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
     "helmet": "^3.15.0",
-    "rethinkdbdash": "^2.3.31"
+    "node-fetch": "^2.3.0",
+    "rethinkdbdash": "^2.3.31",
+    "session-rethinkdb": "^2.0.1"
+  },
+  "scripts": {
+    "start": "node malekaiAPI"
   }
 }
