@@ -4,7 +4,9 @@
   "description": "Simplified API for the Malekai Project",
   "main": "malekaiAPI.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node malekaiAPI",
+    "load-data": "node scripts/load-crowfall-data"
+
   },
   "author": "Scree",
   "license": "MIT",
@@ -16,11 +18,10 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "helmet": "^3.15.0",
+    "jsonfile": "^5.0.0",
     "node-fetch": "^2.3.0",
     "rethinkdbdash": "^2.3.31",
-    "session-rethinkdb": "^2.0.1"
-  },
-  "scripts": {
-    "start": "node malekaiAPI"
+    "session-rethinkdb": "^2.0.1",
+    "simple-git": "^1.107.0"
   }
 }
